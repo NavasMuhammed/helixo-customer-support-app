@@ -69,7 +69,6 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <h1>Image Merger</h1>
       <div className={styles.inputWindow}>
         <div>
           {image && <img className={styles.inputImage} src={image} alt="Selected Image" />}
