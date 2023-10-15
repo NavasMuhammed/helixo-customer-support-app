@@ -1,0 +1,74 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+  color: black;
+  background-color: aliceblue;
+}
+
+.inputImage {
+  width: 200px;
+}
+
+.centeredImage {
+  object-fit: contain;
+  filter: drop-shadow(10px 10px 1px rgb(249, 255, 249));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.inputWindow {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.inputWindow>div {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.inputWindow>div img {
+  border-radius: 10px;
+}
+
+.inputWindow>div input {
+  border-radius: 50px;
+  background-color: #6b6b6b;
+  width: 200px;
+  padding: 5px;
+}
+
+.backgroundImage {
+  object-fit: contain;
+}
+
+.controllers {
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  padding: 50px;
+}
+
+.controllers>div {
+  display: flex;
+  align-items: center;
+}
+
+.controllers>button {
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.preview {
+  width: 500px;
+}
