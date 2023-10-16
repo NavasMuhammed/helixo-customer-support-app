@@ -5,18 +5,20 @@ import html2canvas from 'html2canvas';
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
-  const [bg, setBg] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
 
+  // const [imageWidth, setImageWidth] = useState(600);
   const [imageWidth, setImageWidth] = useState(600);
-  // const [imageHeight, setImageHeight] = useState(500);
 
-  const [bgPositionX, setBgPositionX] = useState(250);
-  const [bgPositionY, setBgPositionY] = useState(350); // Set initial Y position to 250 for center bottom
-  const [bgWidth, setBgWidth] = useState(300);
+
+  const [photoPositionX, setPhotoPositionX] = useState(150);
+  const [photoPositionY, setPhotoPositionY] = useState(150); // Set initial Y position to 250 for center bottom
+  const [photoWidth, setPhotoWidth] = useState(300);
   // const [bgHeight, setBgHeight] = useState(300);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files && e.target.files[0];
+    debugger
     if (selectedImage) {
       setImage(URL.createObjectURL(selectedImage));
     }
@@ -25,37 +27,35 @@ export default function Home() {
   const handleBgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files && e.target.files[0];
     if (selectedImage) {
-      setBg(URL.createObjectURL(selectedImage));
+      setPhoto(URL.createObjectURL(selectedImage));
     }
   };
 
   const handleDownloadImage = () => {
-    if (image && bg) {
+    if (image && photo) {
       const img1 = new Image();
       img1.src = image;
 
       const img2 = new Image();
-      img2.src = bg;
+      img2.src = photo;
 
       img1.onload = () => {
         const canvas = document.createElement('canvas');
-      
-        // const aspectRatio = img1.width / img1.height;
-        // const desiredWidth = imageWidth; // Your desired canvas width
-      
-        canvas.width = 500;
-        canvas.height = 500;
-      
+
+        canvas.width = imageWidth; // Set the desired canvas width
+        canvas.height = canvas.width * (img1.height / img1.width);
+
+
         const ctx = canvas.getContext('2d');
-      
+
         if (ctx) {
-          ctx.drawImage(img1, 0, 0, imageWidth, 0); // Adjust the size of the first image while maintaining the aspect ratio
-          ctx.drawImage(img2, bgPositionX, bgPositionY, bgWidth, 0); // Adjust the position and size of the second image
-      
+          ctx.drawImage(img1, 0, 0, canvas.width, canvas.height); // Adjust the size of the first image while maintaining the aspect ratio
+          ctx.drawImage(img2, photoPositionX, photoPositionY, 0, 0); // Adjust the position and size of the second image
+
           const a = document.createElement('a');
           // Convert the preview content to an image using html2canvas
-          const previewElement = document.querySelector(`.${styles.preview}`) as HTMLElement;
-          
+          const previewElement = document.getElementById('preview') as HTMLElement;
+
           html2canvas(previewElement).then((canvas) => {
             a.href = canvas.toDataURL('image/png');
             a.download = 'merged_image.png';
@@ -63,7 +63,7 @@ export default function Home() {
           });
         }
       };
-      
+
     }
   };
 
@@ -72,16 +72,16 @@ export default function Home() {
       <div className={styles.inputWindow}>
         <div>
           {image && <img className={styles.inputImage} src={image} alt="Selected Image" />}
-          <label htmlFor="bg">Select a background image</label>
-          <input id="bg" type="file" accept="image/*" onChange={handleImageChange} />
+          <label htmlFor="photo">Select a background image</label>
+          <input id="photo" type="file" accept="image/*" onChange={handleImageChange} />
         </div>
         <div>
-          {bg && <img className={styles.inputImage} src={bg} alt="Selected Image" />}
+          {photo && <img className={styles.inputImage} src={photo} alt="Selected Image" />}
           <label htmlFor="image">Select a photo</label>
           <input id="image" type="file" accept="image/*" onChange={handleBgChange} />
         </div>
       </div>
-      {image && bg && (
+      {image && photo && (
         <div className={styles.controllers}>
           <div>
             <label>Photo Position X:</label>
@@ -89,8 +89,8 @@ export default function Home() {
               type="range"
               min="0"
               max="500"
-              value={bgPositionX}
-              onChange={(e) => setBgPositionX(Number(e.target.value))}
+              value={photoPositionX}
+              onChange={(e) => setPhotoPositionX(Number(e.target.value))}
             />
           </div>
           <div>
@@ -99,8 +99,8 @@ export default function Home() {
               type="range"
               min="0"
               max="500"
-              value={bgPositionY}
-              onChange={(e) => setBgPositionY(Number(e.target.value))}
+              value={photoPositionY}
+              onChange={(e) => setPhotoPositionY(Number(e.target.value))}
             />
           </div>
           <div>
@@ -109,31 +109,41 @@ export default function Home() {
               type="range"
               min="50"
               max="800"
-              value={bgWidth}
-              onChange={(e) => setBgWidth(Number(e.target.value))}
+              value={photoWidth}
+              onChange={(e) => setPhotoWidth(Number(e.target.value))}
+            />
+          </div>
+          <div>
+            <label>Background Size:</label>
+            <input
+              type="range"
+              min="50"
+              max="800"
+              value={imageWidth}
+              onChange={(e) => setImageWidth(Number(e.target.value))}
             />
           </div>
           <button onClick={handleDownloadImage}>Download Merged Image</button>
         </div>
       )}
-      <div className={styles.preview}>
-        {image && bg && (
-          <div style={{ position: 'relative', width: '500px', height: '500px',objectFit:'cover' }}>
+      <div id='preview'  >
+        {image && photo && (
+          <div style={{ position: 'relative', objectFit: 'cover' }}>
             <img
               className={styles.backgroundImage}
               src={image}
               alt="Selected Image"
-              style={{ width: '100%', height: '100%',objectFit:'cover' }}
+              style={{ width: `${imageWidth}px`, objectFit: 'cover' }}
             />
             <img
               className={styles.centeredImage}
-              src={bg}
+              src={photo}
               alt="Selected Image"
               style={{
                 filter: 'drop-shadow(10px 10px 1px rgb(249, 255, 249))',
-                top: `${bgPositionY}px`,
-                left: `${bgPositionX}px`,
-                width: `${bgWidth}px`,
+                top: `${photoPositionY}px`,
+                left: `${photoPositionX}px`,
+                width: `${photoWidth}px`,
                 // height: `${bgHeight}px`,
               }}
             />

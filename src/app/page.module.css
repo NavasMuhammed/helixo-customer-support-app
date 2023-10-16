@@ -1,3 +1,4 @@
+
 .main {
   display: flex;
   flex-direction: column;
@@ -8,7 +9,6 @@
   color: black;
   background-color: aliceblue;
 }
-
 .inputImage {
   width: 200px;
 }
@@ -21,6 +21,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+
 
 .inputWindow {
   display: flex;
@@ -69,6 +71,3 @@
   border-radius: 20px;
 }
 
-.preview {
-  width: 500px;
-}
