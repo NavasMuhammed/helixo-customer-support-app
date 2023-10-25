@@ -1,24 +1,21 @@
 'use client';
+
+
 import styles from './page.module.css';
-import { ChangeEvent, useState } from 'react';
-import html2canvas from 'html2canvas';
+import { ChangeEvent, useState, useRef } from 'react';
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
-
-  // const [imageWidth, setImageWidth] = useState(600);
   const [imageWidth, setImageWidth] = useState(600);
-
-
-  const [photoPositionX, setPhotoPositionX] = useState(150);
-  const [photoPositionY, setPhotoPositionY] = useState(150); // Set initial Y position to 250 for center bottom
+  const [photoPositionX, setPhotoPositionX] = useState(0);
+  const [photoPositionY, setPhotoPositionY] = useState(0);
   const [photoWidth, setPhotoWidth] = useState(300);
-  // const [bgHeight, setBgHeight] = useState(300);
+
+  const previewRef = useRef(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files && e.target.files[0];
-    debugger
     if (selectedImage) {
       setImage(URL.createObjectURL(selectedImage));
     }
@@ -41,29 +38,37 @@ export default function Home() {
 
       img1.onload = () => {
         const canvas = document.createElement('canvas');
-
-        canvas.width = imageWidth; // Set the desired canvas width
-        canvas.height = canvas.width * (img1.height / img1.width);
-
-
+        canvas.width = 1000;
+        canvas.height = 562;
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          ctx.drawImage(img1, 0, 0, canvas.width, canvas.height); // Adjust the size of the first image while maintaining the aspect ratio
-          ctx.drawImage(img2, photoPositionX, photoPositionY, 0, 0); // Adjust the position and size of the second image
+          ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
+
+          // Calculate the position and size for the shadowed image
+          const scaledPhotoWidth = (photoWidth * canvas.width) / imageWidth;
+          const scaledPhotoHeight = (img2.height * scaledPhotoWidth) / img2.width;
+          const scaledPhotoX = (photoPositionX * canvas.width) / imageWidth;
+          const scaledPhotoY = (photoPositionY * canvas.height) / canvas.height;
+
+          // Apply the shadow effect to the shadowed image
+          ctx.shadowColor = 'white';
+          ctx.shadowBlur = 20;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Draw the shadowed image onto the canvas
+          ctx.drawImage(img2, scaledPhotoX, scaledPhotoY, scaledPhotoWidth, scaledPhotoHeight);
+
+          // ctx.drawImage(img2, photoPositionX, photoPositionY, 0, 0);
+          // ctx.drawImage(img1, 0, 0, canvas.width, canvas.height); // Adjust the size of the first image while maintaining the aspect ratio
 
           const a = document.createElement('a');
-          // Convert the preview content to an image using html2canvas
-          const previewElement = document.getElementById('preview') as HTMLElement;
-
-          html2canvas(previewElement).then((canvas) => {
-            a.href = canvas.toDataURL('image/png');
-            a.download = 'merged_image.png';
-            a.click();
-          });
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'merged_image.png';
+          a.click();
         }
       };
-
     }
   };
 
@@ -88,9 +93,12 @@ export default function Home() {
             <input
               type="range"
               min="0"
-              max="500"
+              max={imageWidth}
               value={photoPositionX}
-              onChange={(e) => setPhotoPositionX(Number(e.target.value))}
+              onChange={(e) => {
+                setPhotoPositionX(Number(e.target.value))
+                console.log(Number(e.target.value))
+              }}
             />
           </div>
           <div>
@@ -98,9 +106,12 @@ export default function Home() {
             <input
               type="range"
               min="0"
-              max="500"
+              max="562"
               value={photoPositionY}
-              onChange={(e) => setPhotoPositionY(Number(e.target.value))}
+              onChange={(e) => {
+                setPhotoPositionY(Number(e.target.value))
+                console.log(Number(e.target.value))
+              }}
             />
           </div>
           <div>
@@ -108,43 +119,31 @@ export default function Home() {
             <input
               type="range"
               min="50"
-              max="800"
+              max={imageWidth}
               value={photoWidth}
               onChange={(e) => setPhotoWidth(Number(e.target.value))}
-            />
-          </div>
-          <div>
-            <label>Background Size:</label>
-            <input
-              type="range"
-              min="50"
-              max="800"
-              value={imageWidth}
-              onChange={(e) => setImageWidth(Number(e.target.value))}
             />
           </div>
           <button onClick={handleDownloadImage}>Download Merged Image</button>
         </div>
       )}
-      <div id='preview'  >
+      <div id="preview" ref={previewRef}>
         {image && photo && (
-          <div style={{ position: 'relative', objectFit: 'cover' }}>
+          <div style={{ position: 'relative', objectFit: 'cover', width: imageWidth + 'px' }}>
             <img
               className={styles.backgroundImage}
               src={image}
               alt="Selected Image"
-              style={{ width: `${imageWidth}px`, objectFit: 'cover' }}
+              style={{ width: '100%' }}
             />
             <img
               className={styles.centeredImage}
               src={photo}
               alt="Selected Image"
               style={{
-                filter: 'drop-shadow(10px 10px 1px rgb(249, 255, 249))',
                 top: `${photoPositionY}px`,
                 left: `${photoPositionX}px`,
                 width: `${photoWidth}px`,
-                // height: `${bgHeight}px`,
               }}
             />
           </div>
