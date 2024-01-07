@@ -1,29 +1,40 @@
 'use client';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
-import { ChangeEvent, useState, useRef } from 'react';
 
 export default function Home() {
-  const [image, setImage] = useState<string | null>(null);
+  // const [image, setImage] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [imageWidth, setImageWidth] = useState(600);
   const [photoPositionX, setPhotoPositionX] = useState(0);
   const [photoPositionY, setPhotoPositionY] = useState(0);
-  const [photoWidth, setPhotoWidth] = useState(300);
   const [livePreviewImageData, setLivePreviewImageData] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (photo) {
+      const img = new Image();
+      img.src = photo;
+      img.onload = () => {
+        setImageWidth(img.width);
+        updateLivePreview();
+      };
+    }
+  }
+    , [photo]);
 
 
   const previewRef = useRef(null);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedImage = e.target.files && e.target.files[0];
-    if (selectedImage) {
-      setImage(URL.createObjectURL(selectedImage));
-    }
-  };
+  // const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const selectedImage = e.target.files && e.target.files[0];
+  //   if (selectedImage) {
+  //     setImage(URL.createObjectURL(selectedImage));
+  //   }
+  // };
   const updateLivePreview = () => {
-    if (image && photo) {
+    if (photo) {
       const img1 = new Image();
-      img1.src = image;
+      img1.src = 'assets/brand-bg.png';
 
       const img2 = new Image();
       img2.src = photo;
@@ -41,8 +52,8 @@ export default function Home() {
           // Draw the centered profile image
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
-          let offsetX = centerX - (img2.width / 2);
-          let offsetY = centerY - (img2.height / 2);
+          let offsetX = centerX - (img1.width / 2);
+          let offsetY = centerY - (img1.height / 2);
 
           offsetX += (photoPositionX * canvas.width) / imageWidth;
           offsetY += (photoPositionY * canvas.height) / canvas.height;
@@ -58,8 +69,9 @@ export default function Home() {
             ctx.shadowOffsetX = shadowOffsetX; // Set horizontal shadow offset based on angle
             ctx.shadowOffsetY = shadowOffsetY; // Set vertical shadow offset based on angle
 
-            // Draw the photo with the current shadow settings
-            ctx.drawImage(img2, offsetX, offsetY, img2.width, img2.height);
+            // Draw the photo with the current shadow settings and photo width shoud be 100%
+            ctx.drawImage(img2, offsetX, offsetY, img1.width, img1.height);
+
           }
 
           const livePreviewDataUrl = canvas.toDataURL('image/png');
@@ -80,9 +92,9 @@ export default function Home() {
 
 
   const handleDownloadImage = () => {
-    if (image && photo) {
+    if (photo) {
       const img1 = new Image();
-      img1.src = image;
+      img1.src = 'assets/brand-bg.png';
 
       const img2 = new Image();
       img2.src = photo;
@@ -100,8 +112,8 @@ export default function Home() {
           // Draw the centered profile image
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
-          let offsetX = centerX - (img2.width / 2);
-          let offsetY = centerY - (img2.height / 2);
+          let offsetX = centerX - (img1.width / 2);
+          let offsetY = centerY - (img1.height / 2);
 
           offsetX += (photoPositionX * canvas.width) / imageWidth;
           offsetY += (photoPositionY * canvas.height) / canvas.height;
@@ -118,8 +130,9 @@ export default function Home() {
             ctx.shadowOffsetY = shadowOffsetY; // Set vertical shadow offset based on angle
 
             // Draw the photo with the current shadow settings
-            ctx.drawImage(img2, offsetX, offsetY, img2.width, img2.height);
+            ctx.drawImage(img2, offsetX, offsetY, img1.width, img1.height);
           }
+
 
           const a = document.createElement('a');
           a.href = canvas.toDataURL('image/png');
@@ -133,18 +146,24 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.inputWindow}>
-        <div>
-          {image && <img className={styles.inputImage} src={image} alt="Selected Image" />}
-          <label htmlFor="photo">Select a background image</label>
-          <input id="photo" type="file" accept="image/*" onChange={handleImageChange} />
-        </div>
+
         <div>
           {photo && <img className={styles.inputImage} src={photo} alt="Selected Image" />}
           <label htmlFor="image">Select a photo</label>
           <input id="image" type="file" accept="image/*" onChange={handleBgChange} />
         </div>
+        <div id="preview" ref={previewRef}>
+          {photo && (
+            <div>
+              <p>Real-time Preview:</p>
+              {livePreviewImageData && (
+                <img src={livePreviewImageData} alt="Live Preview Image" style={{ maxWidth: '100%' }} />
+              )}
+            </div>
+          )}
+        </div>
       </div>
-      {image && photo && (
+      {photo && (
         <div className={styles.controllers}>
           <div>
             <label>Photo Position X:</label>
@@ -179,16 +198,7 @@ export default function Home() {
         </div>
       )}
 
-      <div id="preview" ref={previewRef}>
-        {image && photo && (
-          <div>
-            <p>Real-time Preview:</p>
-            {livePreviewImageData && (
-              <img src={livePreviewImageData} alt="Live Preview Image" style={{ maxWidth: '100%' }} />
-            )}
-          </div>
-        )}
-      </div>
+
 
     </main>
   );
