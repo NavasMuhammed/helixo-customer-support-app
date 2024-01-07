@@ -46,7 +46,7 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          let scaleFactorImg2 = Math.min(img1.width / img2.width, img1.height / img2.height);
+          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoPositionY * .01), img1.height / img2.height + (photoPositionY * .01));
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
@@ -74,7 +74,7 @@ export default function Home() {
 
 
             // Draw the photo with the current shadow settings and photo width shoud be 100%
-            ctx.drawImage(img2, 0, -10, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2 + photoPositionY, img2.height * scaleFactorImg2 + photoPositionY);
+            ctx.drawImage(img2, 0, -10, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
 
           }
 
@@ -110,7 +110,7 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          let scaleFactorImg2 = Math.min(img1.width / img2.width, img1.height / img2.height);
+          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoPositionY * .01), img1.height / img2.height + (photoPositionY * .01));
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
@@ -119,11 +119,11 @@ export default function Home() {
           const centerY = canvas.height / 2;
           // let offsetX = centerX - (img1.width / 2);
           // let offsetY = centerY - (img1.height / 2);
-          // offsetX += (photoPositionX * canvas.width) / imageWidth;
           // offsetY += (photoPositionY * canvas.height) / canvas.height;
+          // offsetX += (photoPositionX * canvas.width) / imageWidth;
 
-          let xImg2 = (img1.width - img2.width * scaleFactorImg2) / 2;
           let yImg2 = (img1.height - img2.height * scaleFactorImg2) / 2;
+          let xImg2 = (img1.width - img2.width * scaleFactorImg2) / 2;
 
           // Draw the photo multiple times with different shadow settings
           for (let angle = 0; angle < 360; angle += 45) {
@@ -137,8 +137,9 @@ export default function Home() {
             ctx.shadowOffsetY = shadowOffsetY; // Set vertical shadow offset based on angle
 
 
+
             // Draw the photo with the current shadow settings and photo width shoud be 100%
-            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2 + photoPositionY, img2.height * scaleFactorImg2 + photoPositionY);
+            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
 
           }
 
