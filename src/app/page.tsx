@@ -46,17 +46,20 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
+          let scaleFactorImg2 = Math.min(img1.width / img2.width, img1.height / img2.height);
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
           // Draw the centered profile image
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
-          let offsetX = centerX - (img1.width / 2);
-          let offsetY = centerY - (img1.height / 2);
+          // let offsetX = centerX - (img1.width / 2);
+          // let offsetY = centerY - (img1.height / 2);
+          // offsetY += (photoPositionY * canvas.height) / canvas.height;
+          // offsetX += (photoPositionX * canvas.width) / imageWidth;
 
-          offsetX += (photoPositionX * canvas.width) / imageWidth;
-          offsetY += (photoPositionY * canvas.height) / canvas.height;
+          let yImg2 = (img1.height - img2.height * scaleFactorImg2) / 2;
+          let xImg2 = (img1.width - img2.width * scaleFactorImg2) / 2;
 
           // Draw the photo multiple times with different shadow settings
           for (let angle = 0; angle < 360; angle += 45) {
@@ -69,8 +72,9 @@ export default function Home() {
             ctx.shadowOffsetX = shadowOffsetX; // Set horizontal shadow offset based on angle
             ctx.shadowOffsetY = shadowOffsetY; // Set vertical shadow offset based on angle
 
+
             // Draw the photo with the current shadow settings and photo width shoud be 100%
-            ctx.drawImage(img2, offsetX, offsetY, img1.width, img1.height);
+            ctx.drawImage(img2, 0, -10, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2 + photoPositionY, img2.height * scaleFactorImg2 + photoPositionY);
 
           }
 
@@ -106,17 +110,20 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
+          let scaleFactorImg2 = Math.min(img1.width / img2.width, img1.height / img2.height);
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
           // Draw the centered profile image
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
-          let offsetX = centerX - (img1.width / 2);
-          let offsetY = centerY - (img1.height / 2);
+          // let offsetX = centerX - (img1.width / 2);
+          // let offsetY = centerY - (img1.height / 2);
+          // offsetX += (photoPositionX * canvas.width) / imageWidth;
+          // offsetY += (photoPositionY * canvas.height) / canvas.height;
 
-          offsetX += (photoPositionX * canvas.width) / imageWidth;
-          offsetY += (photoPositionY * canvas.height) / canvas.height;
+          let xImg2 = (img1.width - img2.width * scaleFactorImg2) / 2;
+          let yImg2 = (img1.height - img2.height * scaleFactorImg2) / 2;
 
           // Draw the photo multiple times with different shadow settings
           for (let angle = 0; angle < 360; angle += 45) {
@@ -129,9 +136,12 @@ export default function Home() {
             ctx.shadowOffsetX = shadowOffsetX; // Set horizontal shadow offset based on angle
             ctx.shadowOffsetY = shadowOffsetY; // Set vertical shadow offset based on angle
 
-            // Draw the photo with the current shadow settings
-            ctx.drawImage(img2, offsetX, offsetY, img1.width, img1.height);
+
+            // Draw the photo with the current shadow settings and photo width shoud be 100%
+            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2 + photoPositionY, img2.height * scaleFactorImg2 + photoPositionY);
+
           }
+
 
 
           const a = document.createElement('a');
