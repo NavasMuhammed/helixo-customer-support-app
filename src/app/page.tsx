@@ -165,7 +165,7 @@ export default function Home() {
       </div>
       {photo && (
         <div className={styles.controllers}>
-          <div>
+          {/* <div>
             <label>Photo Position X:</label>
             <input
               type="range"
@@ -178,7 +178,7 @@ export default function Home() {
                 console.log(Number(e.target.value))
               }}
             />
-          </div>
+          </div> */}
           <div>
             <label>Photo Position Y:</label>
             <input
