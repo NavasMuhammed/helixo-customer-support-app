@@ -7,6 +7,7 @@ export default function Home() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [imageWidth, setImageWidth] = useState(600);
   const [photoPositionX, setPhotoPositionX] = useState(0);
+  const [photoScaleFactor, setPhotoScaleFactor] = useState(0);
   const [photoPositionY, setPhotoPositionY] = useState(0);
   const [livePreviewImageData, setLivePreviewImageData] = useState<string | null>(null);
 
@@ -19,8 +20,7 @@ export default function Home() {
         updateLivePreview();
       };
     }
-  }
-    , [photo]);
+  }, [photo, photoPositionX, photoPositionY, photoScaleFactor]);
 
 
   const previewRef = useRef(null);
@@ -46,7 +46,7 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoPositionY * .01), img1.height / img2.height + (photoPositionY * .01));
+          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoScaleFactor * .01), img1.height / img2.height + (photoScaleFactor * .01));
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
@@ -74,7 +74,7 @@ export default function Home() {
 
 
             // Draw the photo with the current shadow settings and photo width shoud be 100%
-            ctx.drawImage(img2, 0, -10, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
+            ctx.drawImage(img2, 0, -10, img2.width, img2.height, 0 + photoPositionX, 0 + photoPositionY, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
 
           }
 
@@ -110,7 +110,7 @@ export default function Home() {
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoPositionY * .01), img1.height / img2.height + (photoPositionY * .01));
+          let scaleFactorImg2 = Math.min(img1.width / img2.width + (photoScaleFactor * .01), img1.height / img2.height + (photoScaleFactor * .01));
           // Draw the background image
           ctx.drawImage(img1, 0, 0, canvas.width, canvas.height);
 
@@ -139,7 +139,7 @@ export default function Home() {
 
 
             // Draw the photo with the current shadow settings and photo width shoud be 100%
-            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 0, 0, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
+            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 0 + photoPositionX, 0 + photoPositionY, img2.width * scaleFactorImg2, img2.height * scaleFactorImg2);
 
           }
 
@@ -176,11 +176,11 @@ export default function Home() {
       </div>
       {photo && (
         <div className={styles.controllers}>
-          {/* <div>
+          <div>
             <label>Photo Position X:</label>
             <input
               type="range"
-              min="0"
+              min="-200"
               max={imageWidth}
               value={photoPositionX}
               onChange={(e) => {
@@ -189,16 +189,30 @@ export default function Home() {
                 console.log(Number(e.target.value))
               }}
             />
-          </div> */}
+          </div>
           <div>
             <label>Photo Position Y:</label>
             <input
               type="range"
-              min="0"
-              max="562"
+              min="-300"
+              max={imageWidth}
               value={photoPositionY}
               onChange={(e) => {
                 setPhotoPositionY(Number(e.target.value))
+                updateLivePreview();
+                console.log(Number(e.target.value))
+              }}
+            />
+          </div>
+          <div>
+            <label>Photo scale:</label>
+            <input
+              type="range"
+              min="-300"
+              max="562"
+              value={photoScaleFactor}
+              onChange={(e) => {
+                setPhotoScaleFactor(Number(e.target.value))
                 updateLivePreview();
                 console.log(Number(e.target.value))
               }}
