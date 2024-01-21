@@ -20,7 +20,7 @@ export default function Home() {
         updateLivePreview();
       };
     }
-  }, [photo, photoPositionX, photoPositionY, photoScaleFactor]);
+  }, [photo,]);
 
 
   const previewRef = useRef(null);
@@ -87,7 +87,7 @@ export default function Home() {
 
 
 
-  const handleBgChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files && e.target.files[0];
     if (selectedImage) {
       setPhoto(URL.createObjectURL(selectedImage));
@@ -161,7 +161,7 @@ export default function Home() {
         <div>
           {photo && <img className={styles.inputImage} src={photo} alt="Selected Image" />}
           <label htmlFor="image">Select a photo</label>
-          <input id="image" type="file" accept="image/*" onChange={handleBgChange} />
+          <input id="image" type="file" accept="image/*" onChange={handlePhotoChange} />
         </div>
         <div id="preview" ref={previewRef}>
           {photo && (
